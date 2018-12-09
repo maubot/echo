@@ -1,0 +1,6 @@
+id: xyz.maubot.echo
+version: 1.0.0
+license: MIT
+modules:
+- echo
+main_class: EchoBot
