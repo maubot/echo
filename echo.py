@@ -1,34 +1,10 @@
 from time import time
 
-from maubot import Plugin, CommandSpec, Command, Argument, MessageEvent
-
-COMMAND_PING = "ping"
-ARG_ECHO = "$echo"
-COMMAND_ECHO = f"echo {ARG_ECHO}"
+from maubot import Plugin, MessageEvent
+from maubot.handlers import command
 
 
 class EchoBot(Plugin):
-    async def start(self) -> None:
-        self.set_command_spec(CommandSpec(
-            commands=[Command(
-                syntax=COMMAND_PING,
-                description="Ping the bot",
-            ), Command(
-                syntax=COMMAND_ECHO,
-                description="Echo something",
-                arguments={
-                    ARG_ECHO: Argument(matches=".+", required=True,
-                                       description="The content to echo"),
-                },
-            )],
-        ))
-        self.client.add_command_handler(COMMAND_PING, self.ping_handler)
-        self.client.add_command_handler(COMMAND_ECHO, self.echo_handler)
-
-    async def stop(self) -> None:
-        self.client.remove_command_handler(COMMAND_PING, self.ping_handler)
-        self.client.remove_command_handler(COMMAND_ECHO, self.echo_handler)
-
     @staticmethod
     def time_since(ms: int) -> str:
         diff = int(time() * 1000) - ms
@@ -45,9 +21,11 @@ class EchoBot(Plugin):
         days, hours = divmod(hours, 24)
         return f"{days} days, {hours} hours, {minutes} minutes and {seconds} seconds"
 
+    @command.new("ping", help="Ping")
     async def ping_handler(self, evt: MessageEvent) -> None:
         await evt.reply(f"Pong! (ping took {self.time_since(evt.timestamp)} to arrive)")
 
-    @staticmethod
-    async def echo_handler(evt: MessageEvent) -> None:
-        await evt.respond(evt.content.command.arguments[ARG_ECHO])
+    @command.new("echo", help="Repeat a message")
+    @command.argument("message", required=True)
+    async def echo_handler(self, evt: MessageEvent, message: str) -> None:
+        await evt.respond(message)
