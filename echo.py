@@ -26,6 +26,6 @@ class EchoBot(Plugin):
         await evt.reply(f"Pong! (ping took {self.time_since(evt.timestamp)} to arrive)")
 
     @command.new("echo", help="Repeat a message")
-    @command.argument("message", required=True)
+    @command.argument("message", pass_raw=True)
     async def echo_handler(self, evt: MessageEvent, message: str) -> None:
         await evt.respond(message)
