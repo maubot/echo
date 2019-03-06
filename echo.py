@@ -1,3 +1,4 @@
+from typing import Optional
 from time import time
 
 from maubot import Plugin, MessageEvent
@@ -6,21 +7,28 @@ from maubot.handlers import command
 
 class EchoBot(Plugin):
     @staticmethod
-    def time_since(ms: int) -> str:
+    def plural(num: int, unit: str, decimals: Optional[int] = None) -> str:
+        num = round(num, decimals)
+        if num == 1:
+            return f"{num} {unit}"
+        else:
+            return f"{num} {unit}s"
+
+    @classmethod
+    def time_since(cls, ms: int) -> str:
         diff = int(time() * 1000) - ms
         if abs(diff) < 10 * 1_000:
             return f"{diff} ms"
         elif abs(diff) < 60 * 1_000:
-            return f"{round(diff / 1_000, 1)} seconds"
+            return cls.plural(diff / 1_000, 'second', decimals=1)
         minutes, seconds = divmod(diff / 1_000, 60)
-        seconds = round(seconds)
         if abs(minutes) < 60:
-            return f"{minutes} minutes and {seconds} seconds"
+            return f"{cls.plural(minutes, 'minute')} and {cls.plural(seconds, 'second')}"
         hours, minutes = divmod(minutes, 60)
         if abs(hours) < 24:
-            return f"{hours} hours, {minutes} minutes and {seconds} seconds"
+            return f"{cls.plural(hours, 'hour')}, {cls.plural(minutes, 'minute')} and {cls.plural(seconds, 'second')}"
         days, hours = divmod(hours, 24)
-        return f"{days} days, {hours} hours, {minutes} minutes and {seconds} seconds"
+        return f"{cls.plural(days, 'day')}, {cls.plural(hours, 'hour')}, {cls.plural(minutes, 'minute')} and {cls.plural(seconds, 'second')}"
 
     @command.new("ping", help="Ping")
     async def ping_handler(self, evt: MessageEvent) -> None:
