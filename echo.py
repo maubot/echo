@@ -13,6 +13,7 @@ class EchoBot(Plugin):
         elif abs(diff) < 60 * 1_000:
             return f"{round(diff / 1_000, 1)} seconds"
         minutes, seconds = divmod(diff / 1_000, 60)
+        seconds = round(seconds)
         if abs(minutes) < 60:
             return f"{minutes} minutes and {seconds} seconds"
         hours, minutes = divmod(minutes, 60)
