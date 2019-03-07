@@ -1,6 +1,6 @@
 maubot: 0.1.0
 id: xyz.maubot.echo
-version: 1.1.0
+version: 1.1.0+dedup
 license: MIT
 modules:
 - echo
