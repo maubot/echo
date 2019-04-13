@@ -1,7 +1,7 @@
 from typing import Optional
 from time import time
 
-from mautrix.types import TextMessageEventContent, MessageType
+from mautrix.types import TextMessageEventContent, MessageType, Format
 
 from maubot import Plugin, MessageEvent
 from maubot.handlers import command
@@ -36,15 +36,19 @@ class EchoBot(Plugin):
     @command.new("ping", help="Ping")
     async def ping_handler(self, evt: MessageEvent) -> None:
         diff = int(time() * 1000) - evt.timestamp
-        content = TextMessageEventContent(msgtype=MessageType.NOTICE,
-                                          body="Pong! (ping took "
-                                          f"{self.prettify_diff(diff)} to arrive)")
+        pretty_diff = self.prettify_diff(diff)
+        content = TextMessageEventContent(
+            msgtype=MessageType.NOTICE, format=Format.HTML,
+            body=f"{evt.sender}: Pong! (ping took {pretty_diff} to arrive)",
+            formatted_body=f"<a href='https://matrix.to/#/{evt.sender}'>{evt.sender}</a>: Pong! "
+            f"(<a href='https://matrix.to/#/{evt.room_id}/{evt.event_id}'>ping</a> took "
+            f"{pretty_diff} to arrive)")
         content["pong"] = {
             "ms": diff,
             "from": evt.sender.split(":", 1)[1],
             "ping": evt.event_id,
         }
-        await evt.reply(content)
+        await evt.respond(content)
 
     @command.new("echo", help="Repeat a message")
     @command.argument("message", pass_raw=True)
