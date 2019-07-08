@@ -45,7 +45,7 @@ class EchoBot(Plugin):
             msgtype=MessageType.NOTICE, format=Format.HTML,
             body=f"{evt.sender}: Pong! (ping {message} {pretty_diff} to arrive)",
             formatted_body=f"<a href='https://matrix.to/#/{evt.sender}'>{evt.sender}</a>: Pong! "
-            f"(<a href='https://matrix.to/#/{evt.room_id}/{evt.event_id}'>ping</a> {message} "
+            f"(<a href='https://matrix.to/#/{evt.room_id}/{evt.event_id}'>ping</a> {html_message} "
             f"{pretty_diff} to arrive)")
         content["pong"] = {
             "ms": diff,
