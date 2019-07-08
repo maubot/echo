@@ -39,11 +39,11 @@ class EchoBot(Plugin):
     async def ping_handler(self, evt: MessageEvent, message: str = "") -> None:
         diff = int(time() * 1000) - evt.timestamp
         pretty_diff = self.prettify_diff(diff)
-        message = f'"{message[:20]}" took' if message else "took"
+        text_message = f'"{message[:20]}" took' if message else "took"
         html_message = f'"{escape(message[:20])}" took' if message else "took"
         content = TextMessageEventContent(
             msgtype=MessageType.NOTICE, format=Format.HTML,
-            body=f"{evt.sender}: Pong! (ping {message} {pretty_diff} to arrive)",
+            body=f"{evt.sender}: Pong! (ping {text_message} {pretty_diff} to arrive)",
             formatted_body=f"<a href='https://matrix.to/#/{evt.sender}'>{evt.sender}</a>: Pong! "
             f"(<a href='https://matrix.to/#/{evt.room_id}/{evt.event_id}'>ping</a> {html_message} "
             f"{pretty_diff} to arrive)")
