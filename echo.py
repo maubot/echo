@@ -52,6 +52,12 @@ class EchoBot(Plugin):
             "from": evt.sender.split(":", 1)[1],
             "ping": evt.event_id,
         }
+        content["m.relates_to"] = {
+            "rel_type": "pong",
+            "event_id": evt.event_id,
+            "from": evt.sender.split(":", 1)[1],
+            "ms": diff,
+        }
         await evt.respond(content)
 
     @command.new("echo", help="Repeat a message")
