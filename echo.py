@@ -53,7 +53,7 @@ class EchoBot(Plugin):
             "ping": evt.event_id,
         }
         content["m.relates_to"] = {
-            "rel_type": "pong",
+            "rel_type": "xyz.maubot.pong",
             "event_id": evt.event_id,
             "from": evt.sender.split(":", 1)[1],
             "ms": diff,
