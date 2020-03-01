@@ -2,7 +2,7 @@ from typing import Optional
 from time import time
 from html import escape
 
-from mautrix.types import TextMessageEventContent, MessageType, Format
+from mautrix.types import TextMessageEventContent, MessageType, Format, RelatesTo, RelationType
 
 from maubot import Plugin, MessageEvent
 from maubot.handlers import command
@@ -46,17 +46,18 @@ class EchoBot(Plugin):
             body=f"{evt.sender}: Pong! (ping {text_message} {pretty_diff} to arrive)",
             formatted_body=f"<a href='https://matrix.to/#/{evt.sender}'>{evt.sender}</a>: Pong! "
             f"(<a href='https://matrix.to/#/{evt.room_id}/{evt.event_id}'>ping</a> {html_message} "
-            f"{pretty_diff} to arrive)")
+            f"{pretty_diff} to arrive)",
+            relates_to=RelatesTo(
+                rel_type=RelationType("xyz.maubot.pong"),
+                event_id=evt.event_id,
+            ))
+        pong_from = evt.sender.split(":", 1)[1]
+        content.relates_to["from"] = pong_from
+        content.relates_to["ms"] = diff
         content["pong"] = {
             "ms": diff,
-            "from": evt.sender.split(":", 1)[1],
+            "from": pong_from,
             "ping": evt.event_id,
-        }
-        content["m.relates_to"] = {
-            "rel_type": "xyz.maubot.pong",
-            "event_id": evt.event_id,
-            "from": evt.sender.split(":", 1)[1],
-            "ms": diff,
         }
         await evt.respond(content)
 
